@@ -2,8 +2,8 @@
 
 {% block content %}
     {% for post in posts %}
-      <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h2>
-      <h4>{{ post.subtitle }}</h3>
+      <h4><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h4>
+      <h5>{{ post.subtitle }}</h5>
       <p>{{ post.body|truncate(100) }}</p>
       <p>
         {{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
