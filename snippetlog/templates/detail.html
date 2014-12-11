@@ -3,13 +3,13 @@
 {% block page_header %}
   <div class="page-header">
     <h1>{{ post.title }}</h1>
-    <h2>{{ post.subtitle }}</h2>
+    <h2> {{ post.subtitle }} </h2>
   </div>
 {% endblock %}
 
 {% block content %}
   <p>{{ post.body }}<p>
-  <p>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }}</p>
+  <p>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |<a href="{{url_for('deletepost',title=post.title) }}"><small> Delete</small></a></p>
   <hr>
   <h2>Comments</h2>
   {% if post.comments %}
