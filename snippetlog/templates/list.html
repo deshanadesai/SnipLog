@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for post in posts %}
+      <h2><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h2>
+      <h3>{{ post.subtitle }}</h3>
+      <p>{{ post.body|truncate(100) }}</p>
+      <p>
+        {{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
+        {% with total=post.comments|length %}
+            {{ total }} comment {%- if total > 1 %}s{%- endif -%}
+        {% endwith %}
+      </p>
+    {% endfor %}
+
+{% from "_formhelpers.html" import render_field %}
+   <form method=post action="/addpost">
+  	<dl>
+ 	   {{ render_field(form.title) }}
+	   {{ render_field(form.subtitle) }}
+	   {{ render_field(form.body) }}
+ 	 </dl>
+	 <p><input type=submit value=Go>
+   </form>
+{% endblock %}
+
+

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="page-header">
+    <h1>{{ post.title }}</h1>
+    <h2>{{ post.subtitle }}</h2>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <p>{{ post.body }}<p>
+  <p>{{ post.created_at.strftime('%H:%M %Y-%m-%d') }}</p>
+  <hr>
+  <h2>Comments</h2>
+  {% if post.comments %}
+    {% for comment in post.comments %}
+       <p>{{ comment.body }}</p>
+       <p><strong>{{ comment.author }}</strong> <small>on {{ comment.created_at.strftime('%H:%M %Y-%m-%d') }}</small></p>
+      {{ comment.text }}
+    {% endfor %}
+  {% endif %}
+  {% from "_formhelpers.html" import render_field %}
+   <form method=post action="/{{post.title}}/addcomment">
+  	<dl>
+ 	   {{ render_field(form2.comment) }}
+	   {{ render_field(form2.author) }}
+ 	 </dl>
+	 <p><input type=submit value=Go>
+   </form>
+
+{% endblock %}
