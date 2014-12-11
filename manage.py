@@ -51,6 +51,12 @@ def addpost():
         post.save()
         return redirect(url_for('GetList'))
 
+@app.route('/<title>/deletepost')
+def deletepost(title):
+        post=Post.objects.get(title=title)
+        post.delete()
+        return redirect(url_for('GetList'))
+
 @app.route('/<title>/addcomment',methods=['GET','POST'])
 def addcomment(title):
         post = Post.objects.get_or_404(title=title)
