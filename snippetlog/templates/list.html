@@ -1,16 +1,17 @@
 {% extends "index.html" %}
 
 {% block content %}
+    <br><br>
     {% for post in posts %}
-      <h4><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h4>
-      <h5>{{ post.subtitle }}</h5>
+      <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
+      <h4>{{ post.subtitle }}</h4>
       <p>{{ post.body|truncate(100) }}</p>
       <p>
         {{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
         {% with total=post.comments|length %}
             {{ total }} comment {%- if total > 1 %}s{%- endif -%} | <a href="{{url_for('deletepost',title=post.title) }}">Delete</a>
         {% endwith %}
-      </p>
+      </p><br>
     {% endfor %}
 
 {% from "_formhelpers.html" import render_field %}

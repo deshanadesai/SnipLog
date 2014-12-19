@@ -6,7 +6,7 @@ from flask.ext.script import Manager, Server
 from snippetlog import app
 from flask import Flask, request, render_template, url_for, redirect
 from flask.views import MethodView
-from wtforms import Form, StringField, validators
+from wtforms import Form, StringField,TextField, validators
 from models import Post, Comment
 manager = Manager(app)
 
@@ -22,7 +22,7 @@ manager.add_command("runserver", Server(
 class AddPostForm(Form):
         title= StringField('Title',[validators.Length(min=4,max=25)])
         subtitle= StringField('Subtitle',[validators.Length(min=0,max=25)])
-        body= StringField('Content',[validators.Length(min=4,max=500)])
+        body= TextField('Content',[validators.Length(min=4,max=500)])
 
 class AddCommentForm(Form):
         comment= StringField('Comment',[validators.Length(min=1,max=100)])
