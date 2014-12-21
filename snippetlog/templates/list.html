@@ -10,7 +10,12 @@
         <i>None</i>
       {% else %}
         {% for tag in post.tags %}
-          {{tag}}
+
+          <!--:: TODO :: Make sure the link is not fixed
+          to localhost. Should be dynamic. But using list.html
+          everywhere creates error. Can be solved by having a different
+          results.html maybe -->
+          <a href='http://localhost:5000/tag/{{tag}}'>{{tag}}</a>
         {% endfor %}
       {% endif %}    
       <p>{{ post.body|truncate(100) }}</p>

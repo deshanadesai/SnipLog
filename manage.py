@@ -82,6 +82,12 @@ def addcomment(title):
         post.save()
         return redirect(url_for('GetDetail', title=title))
 
+@app.route('/tag/<tag>',methods=['GET','POST'])
+def get(tag):
+    posts = Post.objects(tags=tag)
+    form=AddPostForm(request.form)
+    return render_template("list.html",posts=posts,form=form)
+
 
 if __name__ == "__main__":
     manager.run()
