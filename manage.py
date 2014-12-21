@@ -20,16 +20,20 @@ manager.add_command("runserver", Server(
 
 
 class AddPostForm(Form):
-        title= StringField('Title',[validators.Length(min=4,max=25)])
-        subtitle= StringField('Subtitle',[validators.Length(min=0,max=25)])
-        body= TextField('Content',[validators.Length(min=4,max=500)])
-
+        title = StringField('Title',[validators.Length(min=4,max=25)])
+        subtitle = StringField('Subtitle',[validators.Length(min=0,max=25)])
+        body = TextField('Content',[validators.Length(min=4,max=500)])
+        tags = TextField('tags',[validators.Length(min=0,max=500)])
+ 
 class AddCommentForm(Form):
         comment= StringField('Comment',[validators.Length(min=1,max=100)])
         author= StringField('Author',[validators.Length(min=1,max=5)])
         
 @app.route('/')
 def GetList():
+    '''Home screen, gets all the posts, and prints the form for adding a post'''
+    
+    #Gets all the posts
     posts=Post.objects.all()
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
@@ -41,15 +45,25 @@ def GetDetail(title):
         form2=AddCommentForm(request.form)
         return render_template("detail.html", post=post, form=form, form2=form2)
 
+
+
 @app.route('/addpost',  methods=['GET', 'POST'])
-def addpost():
-        form=AddPostForm(request.form)
-        title = form.title.data
-        subtitle = form.subtitle.data
-        body = form.body.data
-        post=Post(title=title,subtitle=subtitle,body=body)
-        post.save()
-        return redirect(url_for('GetList'))
+def addpost(): 
+    ''' Gets called as post function for the addition of a snip.
+    '''
+
+    form=AddPostForm(request.form)
+    title = form.title.data
+    subtitle = form.subtitle.data
+    body = form.body.data
+    taglist = form.tags.data.split(',')
+    if len(taglist) == 1 and taglist[0] == '':
+        taglist = [] 
+    print taglist
+    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist)
+    print post
+    post.save()
+    return redirect(url_for('GetList'))
 
 @app.route('/<title>/deletepost')
 def deletepost(title):

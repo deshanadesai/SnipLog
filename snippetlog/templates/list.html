@@ -5,6 +5,14 @@
     {% for post in posts %}
       <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
       <h4>{{ post.subtitle }}</h4>
+      <b> Tags : </b>
+      {% if post.tags|length == 0 %}
+        <i>None</i>
+      {% else %}
+        {% for tag in post.tags %}
+          {{tag}}
+        {% endfor %}
+      {% endif %}    
       <p>{{ post.body|truncate(100) }}</p>
       <p>
         {{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
@@ -19,7 +27,9 @@
   	<dl>
  	   {{ render_field(form.title) }}
 	   {{ render_field(form.subtitle) }}
-	   {{ render_field(form.body) }}
+     {{ render_field(form.body) }}
+	   {{ render_field(form.tags) }}
+
  	 </dl>
 	 <p><input type=submit value=Go>
    </form>
