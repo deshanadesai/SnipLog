@@ -2,11 +2,14 @@
 
 Prmitive readme.
 
-## :TODO:
+## :TODO: Major Features
 
 1. [x] Add markdown to the todo
-2. [] Add tags feature to the posts.
-
+2. [x] Add tags field to the Post model.
+3. [x] Tags are hyperlinked. Clicking a tag returns all the posts with the same tag
+4. [] Search bar, for content and tag. Something like gmail search maybe?
+5. [] Auth
+6. [] Merging PushIt functionality but with a better name. 
 
 ## Special Mention:
 
