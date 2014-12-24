@@ -10,7 +10,7 @@ from wtforms import Form, StringField,TextField, validators
 from models import Post, Comment
 manager = Manager(app)
 
-
+from lib import search
 # Turn on debugger by default and reloader
 manager.add_command("runserver", Server(
     use_debugger = True,
@@ -105,22 +105,18 @@ def atleast_these_tags(tag):
     return render_template("list.html",posts=posts,form=form)
     
 @app.route('/search/<query>',methods=['GET','POST'])
-def search(query):
+def Search(query):
     ''' 
-        **WORK IN PROGRESS**
-        tags:tag1,tag2
-        title: titlewords
-        subtitle : subtitlewords   
-        remaining text is content.
-        Is this user friendly? Search like that?
-
+    Input query : +tag1 +tag2 keywords
+    Currently employed version of search : v1
     '''
     #need to take out the tag terms out of the query if they exist.
     #Starting with just content based topics
     content = query
     form=AddPostForm(request.form)
-    posts = Post.objects(body__icontains=content)
-    print dir(posts)
+
+    # posts = Post.objects(body__icontains=content)
+    posts = search.search_v1(query)
     return render_template("list.html",posts=posts,form=form)
 
 
