@@ -31,3 +31,11 @@ class Comment(db.EmbeddedDocument):
     created_at = db.DateTimeField(default=datetime.datetime.now, required=True)
     body = db.StringField(verbose_name="Comment", required=True)
     author = db.StringField(verbose_name="Name", max_length=255, required=True)
+
+class UserInfo(db.Document):
+        email = db.EmailField(unique=True)
+        userID = db.StringField(required = True, max_length=20)
+        password = db.StringField(required = True)
+        is_active = db.BooleanField(default = True)
+        isAdmin = db.BooleanField(default = False)
+        timestamp = db.DateTimeField(default = datetime.datetime.now())
