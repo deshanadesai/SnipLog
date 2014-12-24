@@ -83,10 +83,46 @@ def addcomment(title):
         return redirect(url_for('GetDetail', title=title))
 
 @app.route('/tag/<tag>',methods=['GET','POST'])
-def get(tag):
-    posts = Post.objects(tags=tag)
+def atleast_these_tags(tag):
+    '''Method to search all the posts with atleast all the tags
+    <tag> = tag1,tag2,tag3
+    No ranking mechanism. But output contains all the posts which atleast
+    contain all the tags provided.
+    '''
+    taglist = tag.split(',')
+    print taglist
+    #If atleast one of the tags is present
+    # posts = Post.objects(tags__in=taglist)
+
+    #If all the tags are exactly present
+    # posts = Post.objects(tags=taglist)
+    
+    #If atleast all the tags specified are present. 
+    posts = Post.objects(tags__all=taglist)
+
+    print posts
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
+    
+@app.route('/search/<query>',methods=['GET','POST'])
+def search(query):
+    ''' 
+        **WORK IN PROGRESS**
+        tags:tag1,tag2
+        title: titlewords
+        subtitle : subtitlewords   
+        remaining text is content.
+        Is this user friendly? Search like that?
+
+    '''
+    #need to take out the tag terms out of the query if they exist.
+    #Starting with just content based topics
+    content = query
+    form=AddPostForm(request.form)
+    posts = Post.objects(body__icontains=content)
+    print dir(posts)
+    return render_template("list.html",posts=posts,form=form)
+
 
 
 if __name__ == "__main__":
