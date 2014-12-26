@@ -49,10 +49,10 @@ def GetList():
 
 @app.route('/<title>')
 def GetDetail(title):
-        post = Post.objects.get_or_404(title=title)
-        form=AddPostForm(request.form)
-        form2=AddCommentForm(request.form)
-        return render_template("detail.html", post=post, form=form, form2=form2)
+    post = Post.objects.get_or_404(title=title)
+    form=AddPostForm(request.form)
+    form2=AddCommentForm(request.form)
+    return render_template("detail.html", post=post, form=form, form2=form2)
 
 
 
@@ -76,76 +76,74 @@ def addpost():
 
 @app.route('/<title>/deletepost')
 def deletepost(title):
-        post=Post.objects.get(title=title)
-        post.delete()
-        return redirect(url_for('GetList'))
+    post=Post.objects.get(title=title)
+    post.delete()
+    return redirect(url_for('GetList'))
 
 @app.route('/<title>/addcomment',methods=['GET','POST'])
 def addcomment(title):
-        post = Post.objects.get_or_404(title=title)
-        form=AddCommentForm(request.form)
-        comment= form.comment.data
-        author= form.author.data
-        comment= Comment(author=author, body=comment)
-        post.comments.append(comment)
-        post.save()
-        return redirect(url_for('GetDetail', title=title))
+    post = Post.objects.get_or_404(title=title)
+    form=AddCommentForm(request.form)
+    comment= form.comment.data
+    author= form.author.data
+    comment= Comment(author=author, body=comment)
+    post.comments.append(comment)
+    post.save()
+    return redirect(url_for('GetDetail', title=title))
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
-	
-	''' Logs in by asking the user for userID and password. Performs checks and shows error messages.'''
-	#Bug: Should be (userID or EmailID) optional.
-	
-        if request.method=="POST" and "userID" in request.form:
-                userID = request.form["userID"]
-                
-		try:
-                	user = UserInfo.objects.get(userID=userID)
-                
-		   	if user.active and check_password_hash(user.password, request.form["password"]):
-                     	   if login_user(user):
-                                return redirect(url_for('GetList'))
-                 	else:
-                           error="Password Incorrect. Please try again."
-                except:
-			error="UserID Incorrect. Please try again."
-                        
-        form = LoginForm(request.form)
-    	return render_template("login.html", form=form, error=error)
+    ''' Logs in by asking the user for userID and password. Performs checks and shows error messages.'''
+    #Bug: Should be (userID or EmailID) optional. You won't give up won't you. Stop being selfish.
+    
+    if request.method=="POST" and "userID" in request.form:
+        userID = request.form["userID"]
+    try:
+        user = UserInfo.objects.get(userID=userID)    
+        if user.active and check_password_hash(user.password, request.form["password"]):
+            if login_user(user):
+                return redirect(url_for('GetList'))
+            else:
+                error="Password Incorrect. Please try again."
+    except:
+        error="UserID Incorrect. Please try again."
+                    
+    form = LoginForm(request.form)
+    return render_template("login.html", form=form, error=error)
                 
 @app.route("/register", methods = ["GET","POST"])
 def register():
-	
-	''' Registers the user. Performs Validation Checks. 
-	    Encrypts the password by Hashing AND Salting. Very secure.
-	    Error messages need to be more specific.
-	    Need to pinpoint the error instead of the list of possible errors.
-	'''
-	#Bug: Verify Email functionality.
 
-        form = RegisterForm(request.form)
-        if request.method == "POST" and form.validate():
-                userID = request.form["userID"]
-                email = request.form["email"]
-                password = request.form["password"]
-                
-                hashedPassword = generate_password_hash(password)
-                user = UserInfo(userID= userID,email= email,password= hashedPassword)
+    
+    ''' Registers the user. Performs Validation Checks. 
+        Encrypts the password by Hashing AND Salting. Very secure.
+        Error messages need to be more specific.
+        Need to pinpoint the error instead of the list of possible errors.
+    '''
+    #Bug: Verify Email functionality.
+
+    form = RegisterForm(request.form)
+    if request.method == "POST" and form.validate():
+        userID = request.form["userID"]
+        email = request.form["email"]
+        password = request.form["password"]
+        
+        hashedPassword = generate_password_hash(password)
+        user = UserInfo(userID= userID,email= email,password= hashedPassword)
             
-                try:
-                        user.save()                       
-                        if login_user(user):
-                                return redirect(url_for('GetList'))
-                        else:
-                                error="Unable to Log you in due to inactive account."
+        try:
+            user.save()                       
+            if login_user(user):
+                return redirect(url_for('GetList'))
+            else:
+                error="Unable to Log you in due to inactive account."
 
-                except Exception,e:
-                        print str(e)
-			error="Unable to Register your account due to system error."
-	error="The form did not pass the validations. Please check \n\t1. If your passwords match.\n\t2. UserID, password length [5-15] characters.\n\t3. Your EmailID is previously registered."
-        form = RegisterForm(request.form)
-    	return render_template("register.html", form= form, error=error)
+        except Exception,e:
+            print str(e)
+            error="Unable to Register your account due to system error."
+    error="The form did not pass the validations. Please check \n\t1. If your passwords match.\n\t2. UserID, password length [5-15] characters.\n\t3. Your EmailID is previously registered."
+    form = RegisterForm(request.form)
+    return render_template("register.html", form= form, error=error)
 
 @login_manager.user_loader
 def load_user(userID):
@@ -161,24 +159,24 @@ def load_user(userID):
     #Bug: Yet to ask for 'remember' to user.
 
     if userID is None:
-            redirect('/')
+        redirect('/')
     
     user = UserInfo.objects.get(userID= userID)
     if user.active:
-            return user
+        return user
     else:
-            return None
+        return None
 
 @app.route("/logout")
 @login_required
 def logout():
-	'''
-    	Logs a user out. (No need to pass the actual user, pops current_user out of session). 
-	This will also clean up the remember me cookie if it exists.
-    	'''
-        logout_user()
-        flash("Logged out.")
-        return redirect(url_for('index'))
+    '''
+        Logs a user out. (No need to pass the actual user, pops current_user out of session). 
+    This will also clean up the remember me cookie if it exists.
+        '''
+    logout_user()
+    flash("Logged out.")
+    return redirect(url_for('index'))
 
 @app.route('/tag/<tag>',methods=['GET','POST'])
 def atleast_these_tags(tag):
