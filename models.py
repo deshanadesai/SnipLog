@@ -14,6 +14,12 @@ class Post(db.Document):
         return url_for('post', kwargs={"title": self.title})
     def __unicode__(self):
         return self.title
+    def get_bagofwords(self):
+        '''
+        Return a list (duplicate allowed) of all words in title and
+        content combined.
+        '''
+        return [x.lower() for x in self.title.split()] + [x.lower() for x in self.body.split()]
 
     meta = {
             'allow_inheritance': True,
