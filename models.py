@@ -30,6 +30,30 @@ class UserInfo(db.Document):
         email = db.EmailField(unique=True)
         userID = db.StringField(required = True, max_length=20)
         password = db.StringField(required = True)
-        is_active = db.BooleanField(default = True)
+        active = db.BooleanField(default = True)
         isAdmin = db.BooleanField(default = False)
         timestamp = db.DateTimeField(default = datetime.datetime.now())
+
+        def is_active(self):
+            return True
+
+        def get_id(self):
+            try:
+                return unicode(self.userID)
+            except AttributeError:
+                raise NotImplementedError('No `id` attribute - override `get_id`')
+
+
+        def get_by_id(self, id):
+            try:
+                dbUser = models.User.objects.with_id(id)
+                return dbUser
+            except Exception, e:
+                print str(e)
+    	    
+        def is_authenticated(self):
+            return True
+
+        
+        def is_anonymous(self):
+            return False

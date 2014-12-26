@@ -7,11 +7,13 @@
     <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
       <form action="/login" method="POST" role="form" name="Loginform">
         <legend>Login</legend>
-      
+      	{% if error %}
+   	 <p class=error><font color="red"><strong>Error:</strong> {{ error }}</font>
+ 	{% endif %}
 	
         <div class="form-group">
-          <label for="">Email:</label>
-          <input type="email" id="email" name="email" class="form-control" placeholder="Email">
+          <label for="">UserID:</label>
+          <input type="text" id="userID" name="userID" class="form-control" placeholder="User ID">
         </div>
 
         <div class="form-group">

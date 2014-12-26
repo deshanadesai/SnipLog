@@ -10,6 +10,8 @@ from wtforms import Form, StringField,TextField, PasswordField, validators
 from models import Post, Comment, UserInfo
 from flask.ext.login import (UserMixin, current_user, login_required, login_user, logout_user, confirm_login, fresh_login_required)
 from werkzeug import generate_password_hash, check_password_hash
+from forms import LoginForm, RegisterForm, AddPostForm, AddCommentForm
+
 manager = Manager(app)
 
 
@@ -20,90 +22,19 @@ manager.add_command("runserver", Server(
     host = '0.0.0.0')
 )
 
-class User(UserMixin):
-    def __init__(self, email=None, password=None, is_active=True, userID=None):
-        self.email = email
-        self.password = password
-        self.is_active = is_active
-        self.isAdmin = False
-        self.userID = None
-
-    def create_instance(self, email, password, userID):
-        UserInfo(userID=userID,email=email,password=password)
-        self.email=email
-        self.password=password
-        self.userID=userID
-        return self
-            
-    def save(self):
-        User.set_password(self, self.password)
-        AddUser = UserInfo(email = self.email, userID=self.userID, password = self.password, is_active=True)
-        AddUser.save()
-        
-
-    def get_by_email(self, email):
-        try:
-            dbUser = UserInfo.objects.get(email=email)
-            
-            if dbUser:
-                self.email = dbUser.email
-                self.is_active = dbUser.is_active
-                self.password = dbUser.password
-                return self
-            else:
-                return None
-        except:
-            print "there was an error"
-            return None
-
-    def get_by_userID(self, userID):
-        try:
-            dbUser = UserInfo.objects.get(userID=userID)
-            
-            if dbUser:
-                self.email = dbUser.email
-                self.is_active = dbUser.is_active
-                self.password = dbUser.password
-                return self
-            else:
-                return None
-        except:
-            print "there was an error"
-            return None
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-class LoginForm(Form):
-        email = StringField('Email',[validators.Required()])
-        password = StringField('Password',[validators.Required()])
-
-class RegisterForm(Form):
-        userID = StringField('UserID',[validators.Required()])
-        email = StringField('Email',[validators.Required()])
-        password = PasswordField('Password',[validators.Required(), validators.EqualTo('confirm', message='Passwords must match')])
-        confirm = PasswordField('Repeat Password')
-        
-class AddPostForm(Form):
-        title = StringField('Title',[validators.Length(min=4,max=25)])
-        subtitle = StringField('Subtitle',[validators.Length(min=0,max=25)])
-        body = TextField('Content',[validators.Length(min=4,max=500)])
-        tags = TextField('tags',[validators.Length(min=0,max=500)])
- 
-class AddCommentForm(Form):
-        comment= StringField('Comment',[validators.Length(min=1,max=100)])
-        author= StringField('Author',[validators.Length(min=1,max=5)])
-        
 @app.route('/')
 def index():
+    '''Welcome to SnipLog Page. Login to Continue.'''
+
     form = LoginForm(request.form)
     return render_template("login.html", form=form)
 
 @app.route('/reg')
-def index2():
+def register_page():
+    '''Go to URL to access Register form and register the new user.
+       Redundant method. Needs to be integrated in the index page
+    '''
+
     form = RegisterForm(request.form)
     return render_template("register.html", form= form)
 
@@ -162,24 +93,36 @@ def addcomment(title):
 
 @app.route("/login", methods = ["GET", "POST"])
 def login():
-        if request.method=="POST" and "email" in request.form:
-                email = request.form["email"]
+	
+	''' Logs in by asking the user for userID and password. Performs checks and shows error messages.'''
+	#Bug: Should be (userID or EmailID) optional.
+	
+        if request.method=="POST" and "userID" in request.form:
+                userID = request.form["userID"]
                 
-                UserObj = User()
-                user= UserObj.get_by_email(email)
-                if user and user.is_active and User.check_password(user, request.form["password"]):
-                        if login_user(user):
-                                flash("Logged in!")
+		try:
+                	user = UserInfo.objects.get(userID=userID)
+                
+		   	if user.active and check_password_hash(user.password, request.form["password"]):
+                     	   if login_user(user):
                                 return redirect(url_for('GetList'))
-                        else:
-                                flash("unable to log you in")
-                else:
-                        flash("Password incorrect.")
-                        print "error"
-        return render_template("hello.html")
+                 	else:
+                           error="Password Incorrect. Please try again."
+                except:
+			error="UserID Incorrect. Please try again."
+                        
+        form = LoginForm(request.form)
+    	return render_template("login.html", form=form, error=error)
                 
 @app.route("/register", methods = ["GET","POST"])
 def register():
+	
+	''' Registers the user. Performs Validation Checks. 
+	    Encrypts the password by Hashing AND Salting. Very secure.
+	    Error messages need to be more specific.
+	    Need to pinpoint the error instead of the list of possible errors.
+	'''
+	#Bug: Verify Email functionality.
 
         form = RegisterForm(request.form)
         if request.method == "POST" and form.validate():
@@ -187,36 +130,41 @@ def register():
                 email = request.form["email"]
                 password = request.form["password"]
                 
-                UserObj = User()
-                user= UserObj.create_instance(email, password, userID)
-                print user
-
+                hashedPassword = generate_password_hash(password)
+                user = UserInfo(userID= userID,email= email,password= hashedPassword)
+            
                 try:
-                        user.save()
-                        dbUser=UserInfo.objects.get_or_404(userID=user.userID)
-                        print dbUser.is_active,"and ",dbUser.userID
-                        login_user(dbUser)
-                        if 2==2:
-                                print "logged in"
-                                flash("Logged in!")
-                                return redirect(url_for('GetList.html'))
+                        user.save()                       
+                        if login_user(user):
+                                return redirect(url_for('GetList'))
                         else:
-                                print "log no"
-                                flash("Unable to log you in")
+                                error="Unable to Log you in due to inactive account."
 
-                except:
-                        print "oops"
-                        flash("Unable to register with that email address.")
-
-        return render_template("hello.html") 
+                except Exception,e:
+                        print str(e)
+			error="Unable to Register your account due to system error."
+	error="The form did not pass the validations. Please check \n\t1. If your passwords match.\n\t2. UserID, password length [5-15] characters.\n\t3. Your EmailID is previously registered."
+        form = RegisterForm(request.form)
+    	return render_template("register.html", form= form, error=error)
 
 @login_manager.user_loader
 def load_user(userID):
+
+    '''Loads user from session or remember_me cookie as applicable
+       If a remember cookie is set, and the session is not, moves the
+       cookie user ID to the session.
+        
+       However, the session may have been set if the user has been
+       logged out on this request, 'remember' would be set to clear,
+       It checks for that and does not restore the session.
+    '''
+    #Bug: Yet to ask for 'remember' to user.
+
     if userID is None:
             redirect('/')
-    user=User()
-    user.get_by_userID(userID)
-    if user.is_active:
+    
+    user = UserInfo.objects.get(userID= userID)
+    if user.active:
             return user
     else:
             return None
@@ -224,9 +172,13 @@ def load_user(userID):
 @app.route("/logout")
 @login_required
 def logout():
+	'''
+    	Logs a user out. (No need to pass the actual user, pops current_user out of session). 
+	This will also clean up the remember me cookie if it exists.
+    	'''
         logout_user()
         flash("Logged out.")
-        return redirect(url_for('Login'))
+        return redirect(url_for('index'))
 
 @app.route('/tag/<tag>',methods=['GET','POST'])
 def atleast_these_tags(tag):

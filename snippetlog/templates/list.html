@@ -1,6 +1,30 @@
 {% extends "index.html" %}
 
 {% block content %}
+
+     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <a class="navbar-brand" href="#">Dump your notes</a>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="/list">Home</a>
+        </li>
+        {% if current_user.is_authenticated() %}
+        <li>
+          <a href="#Dump">Create Snip</a>
+        </li>
+        <li>
+          <a href="#">{{current_user.userID}}</a>
+        </li>
+        <li>
+          <a href="/logout">Logout</a>
+        </li>
+        {% else %}
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+    
     <br><br>
     {% for post in posts %}
       <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
@@ -27,17 +51,18 @@
       </p><br>
     {% endfor %}
 
+<a name = "Dump">
 {% from "_formhelpers.html" import render_field %}
    <form method=post action="/addpost">
   	<dl>
  	   {{ render_field(form.title) }}
 	   {{ render_field(form.subtitle) }}
-     {{ render_field(form.body) }}
+   	   {{ render_field(form.body) }}
 	   {{ render_field(form.tags) }}
 
  	 </dl>
 	 <p><input type=submit value=Go>
    </form>
+</a>
 {% endblock %}
-
 

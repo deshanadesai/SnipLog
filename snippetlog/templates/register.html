@@ -7,7 +7,9 @@
       <form action="/register" method="POST" role="form" name="RegisterForm">
       
         <legend>Register a new user</legend>
-
+	{% if error %}
+   	 <p class=error><font color="red"><strong>Error:</strong> {{ error }}</font>
+ 	{% endif %}
 	<div class="form-group">
           <label for="">UserID:</label>
           <input type="text" id = "userID" name="userID" required="required" class="form-control" placeholder="UserID">
