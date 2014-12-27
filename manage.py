@@ -24,21 +24,14 @@ manager.add_command("runserver", Server(
 
 @app.route('/')
 def index():
-    '''Welcome to SnipLog Page. Login to Continue.'''
 
-    form = LoginForm(request.form)
-    return render_template("login.html", form=form)
-
-@app.route('/reg')
-def register_page():
-    '''Go to URL to access Register form and register the new user.
-       Redundant method. Needs to be integrated in the index page
-    '''
-
-    form = RegisterForm(request.form)
-    return render_template("register.html", form= form)
+	if current_user.is_authenticated():
+		return redirect(url_for('GetList'))
+	form = LoginForm(request.form)
+	return render_template("login.html", form=form)
 
 @app.route('/list')
+@login_required
 def GetList():
     '''Home screen, gets all the posts, and prints the form for adding a post'''
     
@@ -48,6 +41,7 @@ def GetList():
     return render_template("list.html",posts=posts,form=form)
 
 @app.route('/<title>')
+@login_required
 def GetDetail(title):
     post = Post.objects.get_or_404(title=title)
     form=AddPostForm(request.form)
@@ -57,6 +51,7 @@ def GetDetail(title):
 
 
 @app.route('/addpost',  methods=['GET', 'POST'])
+@login_required
 def addpost(): 
     ''' Gets called as post function for the addition of a snip.
     '''
@@ -75,12 +70,14 @@ def addpost():
     return redirect(url_for('GetList'))
 
 @app.route('/<title>/deletepost')
+@login_required
 def deletepost(title):
     post=Post.objects.get(title=title)
     post.delete()
     return redirect(url_for('GetList'))
 
 @app.route('/<title>/addcomment',methods=['GET','POST'])
+@login_required
 def addcomment(title):
     post = Post.objects.get_or_404(title=title)
     form=AddCommentForm(request.form)
@@ -106,7 +103,7 @@ def login():
         else:
             error="Password Incorrect. Please try again."
     except:
-        error="UserID Incorrect. Please try again."
+        error="UserID Incorrect or empty. Please try again."
                     
     form = LoginForm(request.form)
     return render_template("login.html", form=form, error=error)
@@ -134,7 +131,7 @@ def register():
 			error="Unable to register your account due to system error"
 	error = "Passwords do not match. Please try again"
 	form=LoginForm(request.form)
-	return render_template("register.html", form=form, error=error)
+	return render_template("login.html", form=form, error=error)
 
 
 @login_manager.user_loader

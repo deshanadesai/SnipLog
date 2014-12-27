@@ -33,8 +33,8 @@ class Comment(db.EmbeddedDocument):
     author = db.StringField(verbose_name="Name", max_length=255, required=True)
 
 class UserInfo(db.Document):
-        email = db.EmailField(unique=True)
-        userID = db.StringField(required = True, max_length=20)
+        email = db.EmailField(required=True)
+        userID = db.StringField(unique=True,required = True, max_length=20)
         password = db.StringField(required = True)
         active = db.BooleanField(default = True)
         isAdmin = db.BooleanField(default = False)
