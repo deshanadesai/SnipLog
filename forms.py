@@ -2,7 +2,7 @@ from wtforms import Form, StringField,TextField, PasswordField, validators
 from models import Post, Comment, UserInfo
 
 class LoginForm(Form):
-        email = StringField('Email',[validators.Required()])
+        userID = StringField('userID',[validators.Required()])
         password = StringField('Password',[validators.Required()])
 
 class RegisterForm(Form):
@@ -21,3 +21,6 @@ class AddCommentForm(Form):
         comment= StringField('Comment',[validators.Length(min=1,max=100)])
         author= StringField('Author',[validators.Length(min=1,max=5)])
         
+class RegExForm(Form):
+		confirm = PasswordField('Password',[validators.Required()])
+		email = StringField('Email', [validators.Required()])

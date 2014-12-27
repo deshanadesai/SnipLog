@@ -4,25 +4,45 @@
 
 
   <div class="row">
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-      <form action="/login" method="POST" role="form" name="Loginform">
+    <div class="col-xs-2 col-sm-2 col-md-2 col-lg-2">
+	
+      <form action="" method="POST" role="form" name="Loginform" id="loginform" >
         <legend>Login</legend>
       	{% if error %}
-   	 <p class=error><font color="red"><strong>Error:</strong> {{ error }}</font>
- 	{% endif %}
+			<p class=error><font color="red"><strong>Error:</strong> {{ error }}</font>
+		{% endif %}
 	
         <div class="form-group">
           <label for="">UserID:</label>
           <input type="text" id="userID" name="userID" class="form-control" placeholder="User ID">
         </div>
-
+		
         <div class="form-group">
           <label for="">Password:</label>
           <input type="password" id="password" name="password" id="password" class="form-control" required="required" title="">
         </div>
-        
-        <button type="submit" class="btn btn-primary">Login</button>
+		
+		<button type="submit" id="hidelogin" class="btn btn-primary" name="login" value="login" formaction="/login">Login</button> <button type="button" id="pass" class="btn btn-primary" name="register" value = "register" onclick="div_show();">Register</button>
+		
       </form>
+	  <form action="/register" method="POST" role="form" name="RegisterExclusiveFields">
+		<div id="reg_exclusive" style="display:none">
+
+			<div class="form-group">
+         		 <label for="">Repeat Password:</label>
+          		 <input type="password" name="confirm" id="confirm" class="form-control" required="required" title="">
+        	</div>
+
+			<div class="form-group">
+          		 <label for="">Email:</label>
+          		 <input type="email" id="email" name="email" required="required" class="form-control" placeholder="Email">
+        	</div>	
+
+			
+			<button type="submit" class="btn btn-primary" name="Register_submit">Register</button><br><br>
+
+        </div>
+	  </form>
     </div>
   </div>
 
@@ -30,9 +50,17 @@
 {% from "_formhelpers.html" import render_field %}
    <form method=post action="/login">
   	<dl>
- 	   {{ render_field(form.email) }}
+ 	   {{ render_field(form.userID) }}
 	   {{ render_field(form.password) }}
  	 </dl>
 	 <p><input type=submit value=Go>
    </form>//-->
 {% endblock %}
+
+<script langauge="javascript">
+
+function div_dont_show() {
+document.getElementById('regform').style.display = "none";
+}
+
+</script>	
