@@ -91,7 +91,6 @@ def addcomment(title):
     post.save()
     return redirect(url_for('GetDetail', title=title))
 
-
 @app.route("/login", methods = ["GET", "POST"])
 def login():
     ''' Logs in by asking the user for userID and password. Performs checks and shows error messages.'''
@@ -104,8 +103,8 @@ def login():
         if user.active and check_password_hash(user.password, request.form["password"]):
             if login_user(user):
                 return redirect(url_for('GetList'))
-            else:
-                error="Password Incorrect. Please try again."
+        else:
+            error="Password Incorrect. Please try again."
     except:
         error="UserID Incorrect. Please try again."
                     
@@ -136,6 +135,7 @@ def register():
 	error = "Passwords do not match. Please try again"
 	form=LoginForm(request.form)
 	return render_template("register.html", form=form, error=error)
+
 
 @login_manager.user_loader
 def load_user(userID):
