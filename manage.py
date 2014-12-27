@@ -119,26 +119,24 @@ def register():
 	userID = request.form['hiddenfield']
 	password = request.form['hiddenfield2']
 	print userID," ",password
-	return render_template("hello.html")
-'''
-def register():
-
-    
-     Registers the user. Performs Validation Checks. 
-        Encrypts the password by Hashing AND Salting. Very secure.
-        Error messages need to be more specific.
-        Need to pinpoint the error instead of the list of possible errors.
-    
-    #Bug: Verify Email functionality.
-	print request.POST['userID']
 	
-    if request.method == "POST" and "confirm" in request.form:
-        confirm = request.form["confirm"]
-        email = request.form["email"]
-	print confirm
+	if password == confirm:
+		hashedPassword = generate_password_hash(password)
+		user = UserInfo(userID= userID,email= email,password= hashedPassword)
 		
-	return render_template("hello.html")
-'''
+		try:
+			user.save()
+			if login_user(user):
+				return redirect(url_for('GetList'))
+			else:
+				error="Unable to Log you in due to inactive account"
+		except Exception,e:
+			print str(e)
+			error="Unable to register your account due to system error"
+	error = "Passwords do not match. Please try again"
+	form=LoginForm(request.form)
+	return render_template("register.html", form=form, error=error)
+
 @login_manager.user_loader
 def load_user(userID):
 
