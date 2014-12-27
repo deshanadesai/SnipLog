@@ -116,6 +116,9 @@ def login():
 def register():
 	confirm = request.form['confirm']
 	email = request.form['email']
+	userID = request.form['hiddenfield']
+	password = request.form['hiddenfield2']
+	print userID," ",password
 	return render_template("hello.html")
 '''
 def register():
