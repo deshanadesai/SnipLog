@@ -189,19 +189,19 @@ def atleast_these_tags(tag):
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
     
-@app.route('/search/<query>',methods=['GET','POST'])
-def Search(query):
+@app.route('/search',methods=['GET','POST'])
+def Search():
     ''' 
     Input query : +tag1 +tag2 keywords
     Currently employed version of search : v1
     '''
     #need to take out the tag terms out of the query if they exist.
     #Starting with just content based topics
-    content = query
+    content = request.form['srch-term']
     form=AddPostForm(request.form)
 
     # posts = Post.objects(body__icontains=content)
-    posts = search.search_v1(query)
+    posts = search.search_v1(content)
     return render_template("list.html",posts=posts,form=form)
 
 

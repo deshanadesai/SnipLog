@@ -3,12 +3,22 @@
 {% block content %}
 
      <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-      <a class="navbar-brand" href="#">Dump your notes</a>
+      <a class="navbar-brand" href="/list">Home</a>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a href="/list">Home</a>
-        </li>
+        
         {% if current_user.is_authenticated() %}
+		<li>
+		
+        <form method=post class="navbar-form" role="search" action ="/search" >
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" name="srch-term" id="srch-term">
+            <div class="input-group-btn">
+                <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+            </div>
+        </div>
+        </form>
+    	
+		</li>
         <li>
           <a href="#Dump">Create Snip</a>
         </li>
@@ -25,6 +35,7 @@
       </ul>
     </nav>
     
+	
     <br><br>
     {% for post in posts %}
       <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
