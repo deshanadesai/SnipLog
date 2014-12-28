@@ -36,7 +36,12 @@ def GetList():
     '''Home screen, gets all the posts, and prints the form for adding a post'''
     
     #Gets all the posts
-    posts=Post.objects.all()
+    user = UserInfo.objects.get(userID = current_user.userID)
+    print user.userID
+    #posts=Post.objects.get_or_404(user = user)
+    posts=Post.objects(user= user)
+    for post in posts:
+		print post.title
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
 
@@ -64,7 +69,9 @@ def addpost():
     if len(taglist) == 1 and taglist[0] == '':
         taglist = [] 
     print taglist
-    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist)
+    print current_user
+    user = UserInfo.objects.get(userID = current_user.userID)
+    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist, user=user)
     print post
     post.save()
     return redirect(url_for('GetList'))

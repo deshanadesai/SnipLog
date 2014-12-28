@@ -50,12 +50,12 @@
           to localhost. Should be dynamic. But using list.html
           everywhere creates error. Can be solved by having a different
           results.html maybe -->
-          <a href='http://localhost:5000/tag/{{tag}}'>{{tag}}</a>
+          <a href='/tag/{{tag}}'>{{tag}}</a>
         {% endfor %}
       {% endif %}    
       <p>{{ post.body|truncate(100) }}</p>
       <p>
-        {{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
+		{{ post.created_at.strftime('%H:%M %Y-%m-%d') }} |
         {% with total=post.comments|length %}
             {{ total }} comment {%- if total > 1 %}s{%- endif -%} | <a href="{{url_for('deletepost',title=post.title) }}">Delete</a>
         {% endwith %}
