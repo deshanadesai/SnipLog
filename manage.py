@@ -40,8 +40,6 @@ def GetList():
     print user.userID
     #posts=Post.objects.get_or_404(user = user)
     posts=Post.objects(user= user)
-    for post in posts:
-		print post.title
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
 
@@ -68,11 +66,8 @@ def addpost():
     taglist = form.tags.data.split(',')
     if len(taglist) == 1 and taglist[0] == '':
         taglist = [] 
-    print taglist
-    print current_user
     user = UserInfo.objects.get(userID = current_user.userID)
     post=Post(title=title,subtitle=subtitle,body=body, tags = taglist, user=user)
-    print post
     post.save()
     return redirect(url_for('GetList'))
 
@@ -135,8 +130,9 @@ def register():
 				error="Unable to Log you in due to inactive account"
 		except Exception,e:
 			print str(e)
-			error="Unable to register your account due to system error"
-	error = "Passwords do not match. Please try again"
+			error="UserId taken. Please try another."
+	else:	
+		error = "Passwords do not match. Please try again"
 	form=LoginForm(request.form)
 	return render_template("login.html", form=form, error=error)
 
