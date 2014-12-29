@@ -200,6 +200,8 @@ def Search():
     '''
     #need to take out the tag terms out of the query if they exist.
     #Starting with just content based topics
+    print request.form
+    print request.form['srch-term']
     content = request.form['srch-term']
     form=AddPostForm(request.form)
 
