@@ -35,7 +35,7 @@ class UserInfo(db.Document):
 
 class Post(db.Document):
     created_at = db.DateTimeField(default=datetime.datetime.now)
-    user = db.ReferenceField(UserInfo)
+    user = db.ListField(db.ReferenceField(UserInfo), required=True)
     title = db.StringField(max_length=255, required=True)
     subtitle = db.StringField(max_length=255, required=True)
     body = db.StringField(required=True)
@@ -53,10 +53,13 @@ class Post(db.Document):
         '''
         return [x.lower() for x in self.title.split()] + [x.lower() for x in self.body.split()]
 
+	def get_user(self):
+		return user
+
     meta = {
             'allow_inheritance': True,
-            'indexes': ['-created_at', 'title'],
-            'ordering': ['-created_at']
+            'indexes': ['-user'],
+            'ordering': ['-user', '-created_at']
         }
 
 

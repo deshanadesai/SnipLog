@@ -39,7 +39,12 @@ def GetList():
     user = UserInfo.objects.get(userID = current_user.userID)
     print user.userID
     #posts=Post.objects.get_or_404(user = user)
-    posts=Post.objects(user= user)
+    check= Post.objects.all()
+    print "Here it goes:"
+    for ch in check:
+		print ch.title
+    print "ends here"
+    posts=Post.objects(user=user)
     form=AddPostForm(request.form)
     return render_template("list.html",posts=posts,form=form)
 
@@ -67,7 +72,7 @@ def addpost():
     if len(taglist) == 1 and taglist[0] == '':
         taglist = [] 
     user = UserInfo.objects.get(userID = current_user.userID)
-    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist, user=user)
+    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist, user=[user])
     post.save()
     return redirect(url_for('GetList'))
 
@@ -169,6 +174,14 @@ def logout():
     logout_user()
     flash("Logged out.")
     return redirect(url_for('index'))
+
+@app.route('/share')
+def share():
+	title = request.form['title']
+	userID = request.form['userID']
+	user = user.objects.get(userID = userID)
+	Post.objects(title = title).update_one(push__user = user)
+	return redirect(url_for('GetList'))
 
 @app.route('/tag/<tag>',methods=['GET','POST'])
 def atleast_these_tags(tag):
