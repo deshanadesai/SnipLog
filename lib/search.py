@@ -31,10 +31,19 @@ def queryparser(query):
     Example: +'tag 1' +'tag' content
 
     '''
+    #This is only for tags with quotation marks
     patterntag = r"\+'(.*?)'"
     taglist = re.findall(patterntag, query)
 
-    contentstring = re.sub(patterntag,'',query).strip(' ')
+    #Need to remove them and check for single word quotation less tags
+    quoteless_q = re.sub(patterntag, '', query)
+    #Extracting single words tags
+    #Pattern for single word tags
+    patterntag_single = r"\+(\w+)"
+    taglist = taglist + re.findall(patterntag_single, quoteless_q)
+    # print taglist
+    contentstring = re.sub(patterntag_single,'',quoteless_q).strip(' ')
+
 
     return {'taglist':taglist,
             'contentstring':contentstring
@@ -55,8 +64,11 @@ def search_v1(query):
     qparsed = {}
     
     qparsed = queryparser(query)
+    # print qparsed
     taglist = qparsed['taglist']
     wordlist = qparsed['contentstring'].split()
+
+
 
     #TODO : REMOVE STOPWORDS FROM THE QUERY.
     wordlist_set = set(wordlist)
@@ -70,8 +82,16 @@ def search_v1(query):
     else:
     	posts = Post.objects.all()
 
+    #If there is no contentstring.
+    if len(wordlist) == 0:
+    	return posts
+
+
     #I am assuming the database won't be queried again if I work on its content.
     
+
+
+
     #Relevant posts are in this dictionary in the format : <Post>:score
     posts_relevant = {}
 
