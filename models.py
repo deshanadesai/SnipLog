@@ -37,7 +37,7 @@ class Post(db.Document):
     created_at = db.DateTimeField(default=datetime.datetime.now)
     user = db.ListField(db.ReferenceField(UserInfo), required=True)
     title = db.StringField(max_length=255, required=True)
-    subtitle = db.StringField(max_length=255, required=True)
+    subtitle = db.StringField(max_length=255)
     body = db.StringField(required=True)
     comments = db.ListField(db.EmbeddedDocumentField('Comment'))
     tags = db.ListField(db.StringField(max_length=255, required =False))

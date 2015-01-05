@@ -64,15 +64,22 @@ def addpost():
     ''' Gets called as post function for the addition of a snip.
     '''
 
-    form=AddPostForm(request.form)
+    '''form=AddPostForm(request.form)
     title = form.title.data
     subtitle = form.subtitle.data
-    body = form.body.data
-    taglist = form.tags.data.split(',')
+    body = form.body.data'''
+    title = request.form["title"]
+    body = request.form["content"]
+    if "tags" in request.form:
+        tags = request.form["tags"]
+    else:
+        tags=""
+		
+    taglist = tags.split(',')
     if len(taglist) == 1 and taglist[0] == '':
         taglist = [] 
     user = UserInfo.objects.get(userID = current_user.userID)
-    post=Post(title=title,subtitle=subtitle,body=body, tags = taglist, user=[user])
+    post=Post(title=title,body=body, tags = taglist, user=[user])
     post.save()
     return redirect(url_for('GetList'))
 
