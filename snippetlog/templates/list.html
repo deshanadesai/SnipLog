@@ -91,7 +91,7 @@
     <br><br>
     {% for post in posts %}
 	<div class="form-group">
-      <h3><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
+      <h4><a href="{{ url_for('GetDetail', title=post.title) }}">{{ post.title }}</a></h3>
 <!--	  {% if post.subtitle %}
       	<h4>{{ post.subtitle }}</h4>
 	  {% endif %}-->
