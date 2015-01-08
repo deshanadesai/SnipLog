@@ -39,14 +39,18 @@ def GetList():
     user = UserInfo.objects.get(userID = current_user.userID)
     print user.userID
     #posts=Post.objects.get_or_404(user = user)
-    check= Post.objects.all()
-    print "Here it goes:"
-    for ch in check:
-		print ch.title
-    print "ends here"
+    taglist=[]
     posts=Post.objects(user=user)
+    for post in posts:
+        tags = post.tags
+        if tags not in taglist and tags:
+			for tag in tags:
+				print tag.encode('utf-8')
+				taglist.append(tag)
+                          
+	
     form=AddPostForm(request.form)
-    return render_template("list.html",posts=posts,form=form)
+    return render_template("list.html",posts=posts,form=form, taglist=taglist)
 
 @app.route('/<title>')
 @login_required
