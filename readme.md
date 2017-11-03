@@ -1,6 +1,5 @@
-#SnipLog.
+# SnipLog.
 
-Prmitive readme.
 
 ## :TODO: Major Features
 
